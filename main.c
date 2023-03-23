@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct{
+typedef struct Queue_t
+{
     // Queue control
     uint8_t head;
     uint8_t tail;
@@ -14,10 +15,14 @@ typedef struct{
     // Event data
     uint8_t *data;
     uint8_t dataSize;
+    struct Queue_t *this;
 
     // Function
     void (*ptr_hello)(void);
-    uint8_t index;
+    bool (*ptr_isQueueFull)(struct Queue_t *);
+    bool (*ptr_isQueueEmpty)(struct Queue_t *);
+    bool (*ptr_enqueue)(struct Queue_t *, uint8_t data);
+    bool (*ptr_dequeue)(struct Queue_t *, uint8_t *data);
 } Queue_t;
 
 // switch(nana) {
@@ -57,6 +62,11 @@ Queue_t *createQueue(uint8_t capacity, uint8_t size){
     queue->data = malloc(size * queue->capacity);
     queue->dataSize = size;
     queue->ptr_hello = hello;
+    queue->ptr_isQueueFull = isQueueFull;
+    queue->ptr_isQueueEmpty = isQueueEmpty;
+    queue->ptr_enqueue = enQueue;
+    queue->ptr_dequeue = deQueue;
+
     return queue;
 }
 
@@ -65,7 +75,7 @@ bool enQueue(Queue_t *queue, uint8_t data){
         return false;
     }
 
-    if(isQueueFull(queue)){
+    if(queue->ptr_isQueueFull(queue)){
         uint8_t draft;
         printf("Queue: 0x%p is Full!\n", queue);
         deQueue(queue, &draft);
@@ -82,7 +92,7 @@ bool deQueue(Queue_t *queue, uint8_t *data){
         return false;
     }
 
-    if(isQueueEmpty(queue)){
+    if(queue->ptr_isQueueEmpty(queue)){
         printf("Queue: 0x%p is Empty!\n", queue);
         return false;
     }
@@ -107,25 +117,18 @@ void main(void){
     Queue_t *brainstormer_queue = createQueue(10, sizeof(uint8_t));
     
     printf("is queue full?\r\n");
-    printf("%02d\n", isQueueFull(brainstormer_queue));
+    printf("%02d\n", brainstormer_queue->ptr_isQueueFull(brainstormer_queue));
 
     printf("is queue empty?\r\n");
-    printf("%02d\n", isQueueEmpty(brainstormer_queue));
-
-    // uint8_t draft = 0x55;
-    // printf("Enqueue: %002d\r\n", enQueue(brainstormer_queue, draft));
-    // draft = 0;
+    printf("%02d\n", brainstormer_queue->ptr_isQueueEmpty(brainstormer_queue));
 
     printf("%02d %d\n", brainstormer_queue->size, brainstormer_queue->capacity);
-
-    // printf("Dequeue: %02d\r\n", deQueue(brainstormer_queue, &draft));
-    // printf("Item: %02x\r\n", draft);
 
     // Teste de enfileramento
     for(uint8_t i = 0; i < (brainstormer_queue->capacity + 10); i++) {
         printf("Enfiando %d ...\n", i);
         
-        if(enQueue(brainstormer_queue, i) == false)
+        if(brainstormer_queue->ptr_enqueue(brainstormer_queue, i) == false)
         {
             printf("Moio, ta cheio\n");
             break;
@@ -138,17 +141,20 @@ void main(void){
     }
 
     // Teste de desfileramento
-    // for(uint8_t i = 0; i < brainstormer_queue->capacity + 1 ; i++) 
-    // {
-    //     uint8_t data = 0U;
+    for(uint8_t i = 0; i < brainstormer_queue->capacity + 1 ; i++) 
+    {
+        uint8_t data = 0U;
         
-    //     if(deQueue(brainstormer_queue, &data) == false)
-    //         break;
+        if(brainstormer_queue->ptr_dequeue(brainstormer_queue, &data) == false)
+            break;
 
-    //     printf("Desenfiando %d\n", data);
-    // }
+        printf("Desenfiando %d\n", data);
+    }
 
-    brainstormer_queue->ptr_hello();
+    // brainstormer_queue->ptr_hello();
+    // brainstormer_queue->ptr_isQueueFull(brainstormer_queue);
+
+    exit(0);
 }
 
 
