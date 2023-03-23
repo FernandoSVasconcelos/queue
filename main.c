@@ -67,7 +67,7 @@ bool enQueue(Queue_t *queue, uint8_t data){
 
     if(isQueueFull(queue)){
         uint8_t draft;
-        printf("Queue: 0x%04X is Full!\n", queue);
+        printf("Queue: 0x%p is Full!\n", queue);
         deQueue(queue, &draft);
     }
 
@@ -83,7 +83,7 @@ bool deQueue(Queue_t *queue, uint8_t *data){
     }
 
     if(isQueueEmpty(queue)){
-        printf("Queue: 0x%04X is Empty!\n", queue);
+        printf("Queue: 0x%p is Empty!\n", queue);
         return false;
     }
 
