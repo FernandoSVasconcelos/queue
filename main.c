@@ -25,18 +25,6 @@ typedef struct Queue_t
     bool (*ptr_dequeue)(struct Queue_t *, uint8_t *data);
 } Queue_t;
 
-// switch(nana) {
-//     case 1:
-//     case 2:
-// }
-// void (*ptr_hello)(void)[10];
-
-// while(nana) {
-//     queue->ptr_hello[index]();
-// }
-
-
-
 Queue_t *createQueue(uint8_t capacity, uint8_t size);
 bool enQueue(Queue_t *queue, uint8_t data);
 bool deQueue(Queue_t *queue, uint8_t *data);
@@ -137,12 +125,3 @@ void main(void){
 
     exit(0);
 }
-
-
-
-
-
-
-
-
-
