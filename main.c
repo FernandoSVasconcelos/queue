@@ -42,13 +42,6 @@ bool enQueue(Queue_t *queue, uint8_t data);
 bool deQueue(Queue_t *queue, uint8_t *data);
 bool isQueueFull(Queue_t *queue);
 bool isQueueEmpty(Queue_t *queue);
-void hello(void);
-
-void hello(void)
-{
-    printf("Hello world\n");
-}
-
 Queue_t *createQueue(uint8_t capacity, uint8_t size){
     Queue_t *queue = (Queue_t *) malloc(sizeof(Queue_t));
 
@@ -61,7 +54,6 @@ Queue_t *createQueue(uint8_t capacity, uint8_t size){
     // Allocate data space in RAM
     queue->data = malloc(size * queue->capacity);
     queue->dataSize = size;
-    queue->ptr_hello = hello;
     queue->ptr_isQueueFull = isQueueFull;
     queue->ptr_isQueueEmpty = isQueueEmpty;
     queue->ptr_enqueue = enQueue;
